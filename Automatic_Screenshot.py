@@ -2,7 +2,7 @@ import time
 import os
 import zipfile
 import smtplib
-import shutil  # Added for folder deletion 🧹
+import shutil  # Added for folder deletion 
 from mss import mss
 from datetime import datetime
 from email.message import EmailMessage
@@ -57,7 +57,7 @@ def run_mission():
     num_shots = total_time // interval
     os.makedirs(SAVE_DIR, exist_ok=True)
 
-    print(f"\n🚀 Mission Started: {num_shots} shots every {interval}s.")
+    print(f"\nMission Started: {num_shots} shots every {interval}s.")
     
     # 2. Capture Loop
     with mss() as sct:
@@ -65,30 +65,31 @@ def run_mission():
             timestamp = datetime.now().strftime("%H-%M-%S")
             filename = os.path.join(SAVE_DIR, f"capture_{i}_{timestamp}.png")
             sct.shot(output=filename)
-            print(f" [📷] Shot {i}/{num_shots} saved.")
+            print(f"Shot {i}/{num_shots} saved.")
             
             if i < num_shots:
                 time.sleep(interval)
 
     # 3. Finalize: Zip, Mail, and Cleanup
     zip_name = f"SOC_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip"
-    print(f"\n📦 Creating ZIP: {zip_name}")
+    print(f"\n Creating ZIP: {zip_name}")
     create_report_zip(zip_name, SAVE_DIR)
     
-    print("📧 Dispatching to SOC HQ...")
+    print("Dispatching to SOC HQ...")
     try:
         send_email(zip_name)
-        print("✅ Success: Email sent.")
+        print("Success: Email sent.")
         
-        # Cleanup: Delete the local images and the ZIP file 🧹
-        print("🧹 Cleaning up local evidence...")
+        # Cleanup: Delete the local images and the ZIP file
+        print("Cleaning up local evidence...")
         shutil.rmtree(SAVE_DIR)  # Deletes the screenshot folder
         os.remove(zip_name)      # Deletes the temporary ZIP file
-        print("✨ Local drive is clean.")
+        print("Local drive is clean.")
         
     except Exception as e:
-        print(f"❌ Email Failed: {e}")
-        print("⚠️ Cleanup aborted to preserve data.")
+        print(f"Email Failed: {e}")
+        print("Cleanup aborted to preserve data.")
 
 if __name__ == "__main__":
+
     run_mission()
